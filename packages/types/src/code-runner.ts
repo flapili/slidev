@@ -13,7 +13,7 @@ export interface CodeRunnerContext {
   /**
    * Use (other) code runner to run code.
    */
-  run: (code: string, lang: string) => Promise<CodeRunnerOutputs>
+  run: (code: string, lang: string) => Promise<CodeRunnerOutputs | CodeRunnerStreamReturn>
 }
 
 export interface CodeRunnerOutputHtml {
@@ -60,6 +60,16 @@ export type CodeRunnerOutput = CodeRunnerOutputHtml | CodeRunnerOutputError | Co
 
 export type CodeRunnerOutputs = Arrayable<CodeRunnerOutput>
 
-export type CodeRunner = (code: string, ctx: CodeRunnerContext) => Awaitable<CodeRunnerOutputs>
+export type CodeRunnerStream = {
+  type: 'stdout' | 'stderr'
+  data: string
+} | {
+  type: 'exit'
+  code: number
+}
+
+export type CodeRunnerStreamReturn = ReadableStream<CodeRunnerStream>
+
+export type CodeRunner = (code: string, ctx: CodeRunnerContext) => Awaitable<CodeRunnerOutputs | CodeRunnerStreamReturn>
 
 export type CodeRunnerProviders = Record<string, CodeRunner>
