@@ -143,14 +143,7 @@ else if (autorun)
   <div v-if="disabled" class="text-sm text-center opacity-50">
     Code is disabled in the "{{ $renderContext }}" mode
   </div>
-
-  <div v-else-if="isStream" class="text-sm text-center opacity-50">
-    <div>
-      <IconButton class="w-8 h-8 max-h-full flex justify-center items-center" title="Open logs" @click="modal = true">
-        <carbon:text-long-paragraph />
-      </IconButton>
-    </div>
-  </div>
+  <template v-else-if="isStream" />
   <div v-else-if="isRunning" class="text-sm text-center opacity-50">
     Running...
   </div>
@@ -181,8 +174,14 @@ else if (autorun)
     </template>
   </div>
   <div v-if="code.trim()" class="absolute right-1 top-1 max-h-full flex gap-1">
-    <IconButton class="w-8 h-8 max-h-full flex justify-center items-center" title="Show logs" @click="triggerRun">
+    <IconButton v-if="!isRunning" class="w-8 h-8 max-h-full flex justify-center items-center" title="Show logs" @click="triggerRun">
       <carbon:play />
+    </IconButton>
+    <IconButton v-else class="w-8 h-8 max-h-full flex justify-center items-center" title="Is running">
+      <svg-spinners:ring-resize />
+    </IconButton>
+    <IconButton v-if="streamResults" class="w-8 h-8 max-h-full flex justify-center items-center" :class="{ 'text-red-600': streamExitCode }" title="Show logs" @click="modal = true">
+      <carbon:text-long-paragraph />
     </IconButton>
   </div>
 </template>
